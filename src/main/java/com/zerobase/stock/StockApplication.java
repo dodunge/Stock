@@ -1,5 +1,8 @@
 package com.zerobase.stock;
 
+import com.zerobase.stock.model.Company;
+import com.zerobase.stock.scraper.Scraper;
+import com.zerobase.stock.scraper.YahooFinanceScraper;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,35 +17,7 @@ import java.io.IOException;
 public class StockApplication {
 
 	public static void main(String[] args) {
-		//SpringApplication.run(StockApplication.class, args);
-
-		// https://jsoup.org/apidocs/에서 자세한 사용 볼 수 있음
-		try {
-			Connection connection = Jsoup.connect("https://finance.yahoo.com/quote/COKE/history?period1=99100800&period2=1691366400&interval=1mo&filter=history&frequency=1mo&includeAdjustedClose=true");
-			Document document = connection.get();
-
-			Elements eles = document.getElementsByAttributeValue("data-test", "historical-prices");
-			Element ele = eles.get(0); // table 전체
-
-			Element tbody = ele.children().get(1); // get(0) : thead, get(2) : tfoot
-			for (Element e : tbody.children()) {
-				String txt = e.text();
-				if(!txt.endsWith("Dividend")) {
-					continue;
-				}
-				String[] splits = txt.split(" ");
-				String month = splits[0];
-				int day = Integer.parseInt(splits[1].replace(",", ""));
-				int year = Integer.parseInt(splits[2]);
-				String dividend = splits[3];
-
-				System.out.println(year + "/" + month + "/" + day + " -> " + dividend);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		SpringApplication.run(StockApplication.class, args);
 	}
 
 }

@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 
 @RestController
 @RequestMapping("/company")
@@ -22,7 +20,9 @@ public class CompanyController {
 
     @GetMapping("/autocomplete")
     public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
-        return null;
+        var result = this.companyService.autocomplete(keyword);
+        // var result = this.companyService.getCompanyNamesByKeyword(keyword);
+        return ResponseEntity.ok(result);
     }
 
     // Pageable : springboot에서 제공하는 기능
@@ -32,6 +32,11 @@ public class CompanyController {
         return ResponseEntity.ok(companyEntities);
     }
 
+    /**
+     * 회사 및 배당금 정보 추가
+     * @param request
+     * @return
+     */
     @PostMapping
     public ResponseEntity<?> addCompany(@RequestBody Company request) {
         String ticker = request.getTicker().trim();
@@ -40,6 +45,8 @@ public class CompanyController {
         }
 
         Company company = this.companyService.save(ticker);
+        //회사가 저장 될 때마다 트라이에 회사명 삽입
+        this.companyService.addAutocompleteKeyword(company.getName());
         return ResponseEntity.ok(company);
     }
 

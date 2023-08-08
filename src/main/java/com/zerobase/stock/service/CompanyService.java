@@ -8,7 +8,9 @@ import com.zerobase.stock.persist.entity.CompanyEntity;
 import com.zerobase.stock.persist.entity.DividendEntity;
 import com.zerobase.stock.scraper.Scraper;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CompanyService {
 
+    private final Trie trie;
     private final Scraper yahooFinanceScraper;
 
     private final CompanyRepository companyRepository;
@@ -54,5 +57,32 @@ public class CompanyService {
                                                 .collect(Collectors.toList());
         this.dividendRepository.saveAll(dividendEntities);
         return company;
+    }
+
+    public List<String> getCompanyNamesByKeyword(String keyword) {
+        Pageable limit = PageRequest.of(0, 10);
+        Page<CompanyEntity> companyEntities = this.companyRepository.findByNameStartingWithIgnoreCase(keyword, limit);
+        return companyEntities.stream()
+                                .map(e -> e.getName())
+                                .collect(Collectors.toList());
+    }
+
+
+    // 회사명 트라이에 삽입
+    public void addAutocompleteKeyword(String keyword) {
+        this.trie.put(keyword, null);
+    }
+
+    // 트라이에서 회사명 조회
+    public List<String> autocomplete(String keyword) {
+        return (List<String>) this.trie.prefixMap(keyword).keySet()
+                .stream()
+                //.limit(10) 방법을 써서 개수를 제한 하거나 앞에서 작성한 것처럼 pageable을 사용해서 페이지 별로 가져오도록
+                .collect(Collectors.toList());
+    }
+
+    // 트라이에서 특정 키워드 삭제
+    public void deleteAutocompleteKeyword(String keyword) {
+        this.trie.remove(keyword);
     }
 }

@@ -1,6 +1,5 @@
 package com.zerobase.stock.web;
 
-import com.zerobase.stock.model.ScrapeResult;
 import com.zerobase.stock.service.FinanceService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

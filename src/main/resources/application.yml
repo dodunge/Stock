@@ -30,6 +30,9 @@ spring:
     host: localhost # 실제로는 해당 다른 서버의 ip주소를 입력해야 함.
     port: 6379 # 실제로는 해당 다른 서버의 포트를 입력해야 함.
 
+  jwt:
+    secret: c3RvY2stc3ByaW5nLWJvb3QtZGl2aWRlbmQtcHJvamVjdC10dXRvcmlhbC1qd3Qtc2VjcmV0LWtleQ==
+
 scheduler:
   scrap:
     yahoo: "0 0 0 * * *"

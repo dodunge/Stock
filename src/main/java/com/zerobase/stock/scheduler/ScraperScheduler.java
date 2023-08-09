@@ -2,6 +2,7 @@ package com.zerobase.stock.scheduler;
 
 import com.zerobase.stock.model.Company;
 import com.zerobase.stock.model.ScrapeResult;
+import com.zerobase.stock.model.constants.CacheKey;
 import com.zerobase.stock.persist.CompanyRepository;
 import com.zerobase.stock.persist.DividendRepository;
 import com.zerobase.stock.persist.entity.CompanyEntity;
@@ -9,14 +10,16 @@ import com.zerobase.stock.persist.entity.DividendEntity;
 import com.zerobase.stock.scraper.Scraper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
 @Component
+@EnableCaching
 @AllArgsConstructor // 아래 private final로 선언해둔 레파지토리 등이 초기화 되도록 하기 위해서 작성 하는 것
 public class ScraperScheduler {
 
@@ -25,19 +28,20 @@ public class ScraperScheduler {
 
     private final Scraper yahooFinanceScraper;
 
-    @Scheduled(fixedDelay = 1000)
-    public void test1() throws InterruptedException {
-        Thread.sleep(10000); // 10초간 일시정지
-        System.out.println(Thread.currentThread().getName() + " -> 테스트 1: " + LocalDateTime.now());
-    }
-
-    @Scheduled(fixedDelay = 1000)
-    public void test2() throws InterruptedException {
-        System.out.println(Thread.currentThread().getName() + " -> 테스트 2: " + LocalDateTime.now());
-    }
+//    @Scheduled(fixedDelay = 1000)
+//    public void test1() throws InterruptedException {
+//        Thread.sleep(10000); // 10초간 일시정지
+//        System.out.println(Thread.currentThread().getName() + " -> 테스트 1: " + LocalDateTime.now());
+//    }
+//
+//    @Scheduled(fixedDelay = 1000)
+//    public void test2() throws InterruptedException {
+//        System.out.println(Thread.currentThread().getName() + " -> 테스트 2: " + LocalDateTime.now());
+//    }
 
     // 일정 주기마다 수행
-     @Scheduled(cron = "${scheduler.scrap.yahoo}")
+    @CacheEvict(value = CacheKey.KEY_FINANCE, allEntries = true)
+    @Scheduled(cron = "${scheduler.scrap.yahoo}")
     public void yahooFinanceScheduling() {
         log.info("scraping scheduler is started.");
 

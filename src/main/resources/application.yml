@@ -26,6 +26,10 @@ spring:
     username: sa
     password:
 
+  redis:
+    host: localhost # 실제로는 해당 다른 서버의 ip주소를 입력해야 함.
+    port: 6379 # 실제로는 해당 다른 서버의 포트를 입력해야 함.
+
 scheduler:
   scrap:
     yahoo: "0 0 0 * * *"

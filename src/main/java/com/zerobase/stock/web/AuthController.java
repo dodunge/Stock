@@ -37,6 +37,7 @@ public class AuthController {
         var member = this.memberService.authenticate(request);
         // 2. 토큰 생성 후 반환
         var token = this.tokenProvider.generateToken(member.getUsername(), member.getRoles());
+        log.info("user login -> " + request.getUsername());
         return ResponseEntity.ok(token);
     }
 }
